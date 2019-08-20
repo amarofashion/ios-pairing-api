@@ -7,7 +7,8 @@ public func routes(_ router: Router) throws {
     }
 
     let guideShopController = GuideShopController()
-    router.get("guideShops", use: guideShopController.get)
-    router.put("guideShop", use: guideShopController.put)
+    router.get("guideShops", use: guideShopController.list)
+    router.post("guideShop", use: guideShopController.insert)
+    router.post("guideShops", use: guideShopController.bulkInsert)
     router.delete("guideShop", Int.parameter, use: guideShopController.delete)
 }

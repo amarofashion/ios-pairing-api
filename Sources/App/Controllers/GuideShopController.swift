@@ -8,16 +8,26 @@
 import Vapor
 
 final class GuideShopController {
-    func get(with request: Request) throws -> Future<[GuideShop]> {
+    func list(with request: Request) throws -> Future<[GuideShop]> {
         return GuideShop.query(on: request).all()
     }
 
-    func put(with request: Request) throws -> Future<GuideShop> {
+    func insert(with request: Request) throws -> Future<GuideShop> {
         guard let guideShop = try? request.content.decode(GuideShop.self) else {
             throw Abort(.badRequest)
         }
 
         return guideShop.save(on: request)
+    }
+
+    func bulkInsert(with request: Request) throws -> Future<HTTPStatus> {
+        guard let guideShops = try? request.content.decode([GuideShop].self) else {
+            throw Abort(.badRequest)
+        }
+
+        return guideShops
+            .map { $0.map { $0.save(on: request) } }
+            .transform(to: HTTPStatus.created)
     }
 
     func delete(with request: Request) throws -> Future<HTTPStatus> {
